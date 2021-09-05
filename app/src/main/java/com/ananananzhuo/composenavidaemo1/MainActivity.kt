@@ -6,13 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -24,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
 import com.ananananzhuo.composenavidaemo1.ui.theme.ComposeNaviDaemo1Theme
 
 class MainActivity : ComponentActivity() {
@@ -40,6 +40,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+const val collection = "collection"
+const val userCenter = "userCenter"
+
 @Composable
 fun Greeting(name: String) {
     val controller = rememberNavController()
@@ -47,11 +50,22 @@ fun Greeting(name: String) {
         composable("goodsList") {
             GoodsList(controller)
         }
-        composable("goodsDetail/{goodsId}", arguments = listOf(navArgument("goodsId") {//路由中三部分的goodsId名称必须一致
-            type = NavType.StringType//表示传递的参数是String类型
-            defaultValue="默认商品"
-        })) {
+        composable(
+            "goodsDetail/{goodsId}",
+            arguments = listOf(navArgument("goodsId") {//路由中三部分的goodsId名称必须一致
+                type = NavType.StringType//表示传递的参数是String类型
+                defaultValue = "默认商品"
+            })
+        ) {
             GoodsDetail(it.arguments?.getString("goodsId"))//获取商品id传递给GoodsDetail视图
+        }
+        navigation(startDestination = userCenter, route = "user") {
+            composable(userCenter) {
+                userCenter(controller)
+            }
+            composable(collection) {
+                collection()
+            }
         }
     }
 }
@@ -59,8 +73,19 @@ fun Greeting(name: String) {
 @Composable
 fun GoodsList(controller: NavHostController) {
     Column {
-        (1..9).forEach {
-            GoodsItem(controller, it)
+        Button(modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth(1f)
+            .height(80.dp)
+            .clip(RoundedCornerShape(10.dp)), onClick = {
+            controller.navigate("user")
+        }) {
+            Text(text = "点击进入嵌套导航首页")
+        }
+        Column {
+            (1..9).forEach {
+                GoodsItem(controller, it)
+            }
         }
     }
 }
@@ -93,5 +118,28 @@ fun GoodsItem(controller: NavHostController, i: Int) {
             Spacer(modifier = Modifier.weight(1f))
         }
         Divider(color = Color.Red)
+    }
+}
+
+/**
+ * 个人中心
+ */
+@Composable
+fun userCenter(controller: NavHostController) {
+    Column(
+        Modifier
+            .fillMaxSize(1f)
+            .clickable {
+                controller.navigate(collection)
+            }) {
+        Text(text = "用户中心点击进入收藏")
+    }
+}
+
+
+@Composable
+fun collection() {
+    Column {
+        Text(text = "收藏")
     }
 }
