@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -77,7 +78,9 @@ fun GoodsList(controller: NavHostController) {
             .padding(10.dp)
             .fillMaxWidth(1f)
             .height(80.dp)
-            .clip(RoundedCornerShape(10.dp)), onClick = {
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.Red)
+            .padding(10.dp), onClick = {
             controller.navigate("user")
         }) {
             Text(text = "点击进入嵌套导航首页")
