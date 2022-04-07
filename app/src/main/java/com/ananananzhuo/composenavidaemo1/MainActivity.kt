@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -25,6 +26,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.ananananzhuo.composelib.ListView
+import com.ananananzhuo.composelib.bean.ItemData
 import com.ananananzhuo.composenavidaemo1.ui.theme.ComposeNaviDaemo1Theme
 
 class MainActivity : ComponentActivity() {
@@ -43,11 +46,15 @@ class MainActivity : ComponentActivity() {
 
 const val collection = "collection"
 const val userCenter = "userCenter"
+const val home = "home"
 
 @Composable
 fun Greeting(name: String) {
     val controller = rememberNavController()
-    NavHost(navController = controller, startDestination = "goodsList") {
+    NavHost(navController = controller, startDestination = home) {
+        composable(home){
+            Home(controller)
+        }
         composable("goodsList") {
             GoodsList(controller)
         }
@@ -68,8 +75,29 @@ fun Greeting(name: String) {
                 collection()
             }
         }
+        composable(navigate_param_transfer1) {
+            NavigateParams1View(controller = controller)
+        }
+        composable(navigate_param_transfer2) {
+            NavigateParams2View(controller = controller)
+        }
     }
 }
+@Composable
+fun Home(controller: NavHostController) {
+    val state = rememberLazyListState()
+    ListView(datas = mutableListOf(
+        ItemData(title = "商品列表", content = "", tag = "goodsList"),
+        ItemData(title = "商品详情", content = "", tag = "goodsDetail"),
+        ItemData(title = "用户中心", content = "", tag = userCenter),
+        ItemData(title = "收藏", content = "", tag = collection),
+        ItemData(title = "导航点击中间按钮跳转新页面，并等待返回数据", content = "", tag = navigate_param_transfer1),
+        ItemData(title = "收藏", content = "", tag = navigate_param_transfer2)
+    ), state = state,click = { itemData: ItemData, index: Int, id: Int ->
+        controller.navigate(itemData.tag)
+    })
+}
+
 
 @Composable
 fun GoodsList(controller: NavHostController) {
