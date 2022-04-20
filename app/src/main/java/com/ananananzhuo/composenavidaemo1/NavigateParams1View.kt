@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.ananananzhuo.composelib.logEE
 
 /**
  * author  :mayong
@@ -27,6 +28,8 @@ const val navigate_param_transfer2 = "navigate_param_transfer2"//导航页面双
 @Composable
 fun NavigateParams1View(controller: NavHostController) {
     val bundle = controller.currentBackStackEntryAsState().value
+    val saveStateHandle = controller.currentBackStackEntryAsState().value?.savedStateHandle
+    logEE("页面重组")
     Column(Modifier
         .fillMaxSize()
         .background(Color.Red),
@@ -41,12 +44,19 @@ fun NavigateParams1View(controller: NavHostController) {
         ) {
             Text(text = bundle?.arguments?.getString("data") ?: "未返回数据")
         }
+        Box(Modifier
+            .padding(horizontal = 14.dp, vertical = 20.dp)
+            .size(120.dp)
+            .background(color = Color.Gray, RoundedCornerShape(10.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = saveStateHandle?.get<String>("data")?:"")
+        }
         Button(onClick = {
             controller.navigate(navigate_param_transfer2)
         }, modifier = Modifier.padding(top = 20.dp)) {
             Text(text = "点击跳转到下一级页面")
         }
-
     }
 }
 
@@ -57,7 +67,7 @@ fun NavigateParams2View(controller: NavHostController) {
         Button(onClick = {
             controller.goBackRouteWithParams(navigate_param_transfer1) {
                 putString("data",
-                    "Hello world to you")
+                    "Hello world to you heihei")
             }
         },modifier = Modifier.padding(top = 20.dp)) {
             Text(text = "点击跳转到下一级页面")
@@ -68,6 +78,20 @@ fun NavigateParams2View(controller: NavHostController) {
             }
         },modifier = Modifier.padding(top = 20.dp)) {
             Text(text = "点击跳转到下一级页面")
+        }
+        Button(onClick = {
+            controller.goBackRouteWithParams1(navigate_param_transfer1) {
+                set("data", "使用SaveStateHandler返回指定页面数据")
+            }
+        },modifier = Modifier.padding(top = 20.dp)) {
+            Text(text = "使用SaveStateHandler返回指定页面数据")
+        }
+        Button(onClick = {
+            controller.goBackWithParams1 {
+                set("data", "使用SaveStateHandler返回上级页面数据")
+            }
+        },modifier = Modifier.padding(top = 20.dp)) {
+            Text(text = "使用SaveStateHandler返回上级页面数据")
         }
     }
 }
